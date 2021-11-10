@@ -26,7 +26,6 @@ def replace_substructure(molecule: Chem.Mol, pattern: Chem.Mol, replace: Chem.Mo
     List[Chem.Mol]
         A list of all matched substitutions
     """
-    kwargs.setdefault("replaceAll", False)
     return Chem.ReplaceSubstructs(molecule, pattern, replace, **kwargs)
 
 
