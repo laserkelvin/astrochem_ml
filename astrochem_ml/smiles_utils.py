@@ -1,4 +1,3 @@
-
 """
 Utility functions for operating SMILES. Generally, just wraps
 functionality in RDKIT, but abstracts those operations away
@@ -14,18 +13,20 @@ from rdkit import Chem
 from mol2vec import features
 
 
-def generate_single_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: bool = True) -> List[str]:
+def generate_single_isos(
+    smi: str, abundance_threshold: float = 0.01, explicit_h: bool = True
+) -> List[str]:
     """
     Generate all singly substituted isotoplogues given an input SMILES
     string, given the isotope meets the specified threshold for Earth's
     natural abundance.
-    
+
     Currently this function generates redundancies: symmetry is not
     recognized, and so there will be equivalent nuclei subsitutions.
     Similarly, we assume that the input SMILES contains the most
     common isotopologue, and with this assumption we skip over the
     most abundant isotope for each substitution.
-    
+
     TODO: build in some sort of filter to remove redundancies.
 
     Parameters
@@ -51,7 +52,7 @@ def generate_single_isos(smi: str, abundance_threshold: float = 0.01, explicit_h
     for atom in molecule.GetAtoms():
         symbol = atom.GetSymbol()
         element = getattr(pt.elements, symbol)
-        # if this 
+        # if this
         if element:
             isotopes = filter(lambda x: x.abundance >= abundance_threshold, element)
             # sort by abundance and then grab all the isotopes except the most commmon
