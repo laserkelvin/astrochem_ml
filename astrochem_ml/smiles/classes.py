@@ -55,6 +55,17 @@ class MoleculeGenerator(object):
 
     @property
     def substructs(self) -> List[Chem.Mol]:
+        """
+        Returns the list of substructures in the form of
+        RDKIT `Mol` objects. When growing the tree, we will
+        randomly sample from this list for the matching
+        and the replacements.
+
+        Returns
+        -------
+        List[Chem.Mol]
+            Returns the current list of substructures
+        """
         return self._substructs
 
     @substructs.setter
@@ -83,40 +94,114 @@ class MoleculeGenerator(object):
         return self.nodes[index]
 
     @property
-    def smiles(self):
+    def smiles(self) -> List[str]:
+        """
+        Return the list of SMILES strings for each
+        node in the tree.
+
+        Returns
+        -------
+        List[str]
+            Canonical SMILES strings for each node
+        """
         return [str(node) for node in self.nodes]
 
     def add_nodes(self, molecules: List[Chem.Mol], parent: Node) -> None:
         """
-        Function to add unique nodes to the current tree.
+        Function to add unique nodes to the current tree. We
+        iterate through each of the new molecules, and check
+        whether it's contained in the list of SMILES of all nodes
+        currently in the tree. 
 
         Parameters
         ----------
         molecules : List[Chem.Mol]
-            [description]
+            List of Mol objects
         parent : Node
-            [description]
+            The parent node corresponding to this molecule.
         """
         # filter out non-unique smiles that aren't already in our tree
         for molecule in molecules:
             if Chem.MolToSmiles(molecule) not in self.smiles:
                 self.nodes.append(MoleculeNode(molecule, parent=parent))
 
-    def find_node(self, node: Node) -> Tuple[int, Node]:
+    def find_node(self, node: MoleculeNode) -> Tuple[int, MoleculeNode]:
+        """
+        Traverses the entire list of nodes looking for a
+        match to the node we wish to search for. This
+        is controlled by the __eq__ method for `MoleculeNode`.
+
+        Parameters
+        ----------
+        node : MoleculeNode
+            Target `MoleculeNode` to search for
+
+        Returns
+        -------
+        Tuple[int, MoleculeNode]
+            The index of the node in the tree, as well as
+            the node itself.
+        """
         return tuple(filter(lambda x: x[1] == node, enumerate(self.nodes)))
 
     @property
-    def random_node(self) -> Node:
+    def random_node(self) -> MoleculeNode:
+        """
+        Grab a random node from the current tree.
+        The random choice is dictated by the object `rng`
+        object.
+
+        Returns
+        -------
+        MoleculeNode
+            A randomly chosen node from the tree
+        """
         return self.rng.choice(self.nodes)
 
     @property
-    def random_substructure(self):
+    def random_substructure(self) -> MoleculeNode:
+        """
+        Grab a random substructure from the list of
+        substructures. The random choice is dictated by 
+        the object `rng` object.
+
+        Returns
+        -------
+        MoleculeNode
+            A randomly chosen node from the tree
+        """
         return self.rng.choice(self.substructs)
+
+    @property
+    def rdkit_molecules(self) -> List[Chem.Mol]:
+        """
+        Return a list of RDKIT Mol objects from the current
+        tree. This is intended to allow the user further
+        manipulation of the resulting structures.
+
+        Returns
+        -------
+        List[Chem.Mol]
+            List of RDKIT Mol objects
+        """
+        return [node.molecule for node in self.nodes]
 
     def __repr__(self) -> str:
         return str(RenderTree(self.nodes[0]))
 
     def grow_tree(self, num_iterations: int):
+        """
+        Grow the current tree for `num_iterations`. For each iteration,
+        we pick a random node to start with, and random substructures
+        to match and replace with. If this operation is successful,
+        we add the nodes that are currently not in the tree via SMILES
+        matching.
+
+        Parameters
+        ----------
+        num_iterations : int
+            Number of iterations to generate for
+        """
         for _ in tqdm(range(num_iterations)):
             # pick a random node to grow
             node = self.random_node
