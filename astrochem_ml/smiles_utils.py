@@ -69,6 +69,50 @@ def generate_single_isos(
     return isotopologues
 
 
+def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: bool = False) -> List[str]:
+    """
+    Exhaustively generate all possible combinations of isotopologues.
+    Naturally, this results in a _lot_ of isotopologues, and so
+    by default we ignore the hydrogen substitutions however can be
+    changed by the user.
+    
+    TODO: same as `generate_single_isos`, there are redundant subsitutions
+
+    Parameters
+    ----------
+    smi : str
+        Input SMILES string
+    abundance_threshold : float, optional
+        Minimum percentage natural abundance, by default 0.01.
+        This value corresponds to the deuterium abundance.
+    explicit_h : bool, optional
+        Whether to generate D substitutions, by default True.
+        Keeping in mind that this can blow up quickly!
+
+    Returns
+    -------
+    List[str]
+        All possible combinations of isotopologue
+        SMILES strings. The ordering of the SMILES
+        is in ascending abundance.
+    """
+    molecule = Chem.MolFromSmiles(smi)
+    if explicit_h:
+        molecule = Chem.AddHs(molecule)
+    output_smiles = []
+    isotopes = product(*get_abundances(molecule, abundance_threshold))
+    common_masses = get_common_masses()
+    for combination in isotopes:
+        for atom, mass in zip(molecule.GetAtoms(), combination):
+            # substitute out the default isotope so we don't
+            # ugly out the SMILES
+            if int(mass) == common_masses.get(atom.GetSymbol()):
+                mass = 0
+            atom.SetIsotope(int(mass))
+        output_smiles.append(Chem.MolToSmiles(Chem.RemoveHs(molecule)))
+    return output_smiles
+
+
 def smi_to_vector(smi: str, model, radius: int = 1) -> np.ndarray:
     """
     Given an embedding model and SMILES string, generate the corresponding
