@@ -50,41 +50,37 @@ and forth between the native `rdkit` objects and SMILES/SMARTS strings.
 
 * Exhaustive isotopologue generation in SMILES
 
-```python
->>> from astrochem_ml.smiles import isotopes
-
-# exhaustively enumerate all possible combinations isotopologues
-# user can set the threshold for natural abundance and whether
-# to include hydrogens
->>> isotopes.generate_all_isos("c1ccccc1", explicit_h=False)
-['c1[13cH]c[13cH][13cH][13cH]1', ... 'c1ccccc1', '[13cH]1[13cH][13cH][13cH][13cH][13cH]1','c1c[13cH][13cH][13cH]c1']
-```
+.. code-block:: python
+        >>> from astrochem_ml.smiles import isotopes
+        # exhaustively enumerate all possible combinations isotopologues
+        # user can set the threshold for natural abundance and whether
+        # to include hydrogens
+        >>> isotopes.generate_all_isos("c1ccccc1", explicit_h=False)
+        ['c1[13cH]c[13cH][13cH][13cH]1', ... 'c1ccccc1', '[13cH]1[13cH][13cH][13cH][13cH][13cH]1','c1c[13cH][13cH][13cH]c1']
 
 * Functional group substitutions
 
 Replace substructures with other ones in a tree data structure!
 
-```python
->>> from astrochem_ml.smiles import MoleculeGenerator
-
-# randomly grow out possible structures starting from benzene,
-# and iteratively replace structures with other functional groups
->>> benzene = MoleculeGenerator("c1ccccc1", substructs=["c", "cC#N", "cC=O", "cN"])
->>> benzene.grow_tree(50)
-100%|██████████████████████████████████████████████████████████████████| 50/50 [00:00<00:00, 237.44it/s]
->>> print(benzene)
-c1ccccc1
-├── Nc1ccccc1
-├── N#Cc1ccccc1
-└── O=Cc1ccccc1
-    ├── Nc1ccccc1C=O
-    │   └── N#Cc1ccccc1C=O
-    ├── Nc1cccc(C=O)c1
-    │   ├── Nc1cccc(C=O)c1N
-    │   │   ├── Nc1c(C=O)ccc(C=O)c1N
-    │   │   ├── Nc1cc(C=O)cc(C=O)c1N
-...
-```
+.. code-block:: python
+        >>> from astrochem_ml.smiles import MoleculeGenerator
+        # randomly grow out possible structures starting from benzene,
+        # and iteratively replace structures with other functional groups
+        >>> benzene = MoleculeGenerator("c1ccccc1", substructs=["c", "cC#N", "cC=O", "cN"])
+        >>> benzene.grow_tree(50)
+        100%|██████████████████████████████████████████████████████████████████| 50/50 [00:00<00:00, 237.44it/s]
+        >>> print(benzene)
+        c1ccccc1
+        ├── Nc1ccccc1
+        ├── N#Cc1ccccc1
+        └── O=Cc1ccccc1
+        ├── Nc1ccccc1C=O
+        │   └── N#Cc1ccccc1C=O
+        ├── Nc1cccc(C=O)c1
+        │   ├── Nc1cccc(C=O)c1N
+        │   │   ├── Nc1c(C=O)ccc(C=O)c1N
+        │   │   ├── Nc1cc(C=O)cc(C=O)c1N
+        ...
 
 This provides a high level interface to view every structure generated,
 and from which parent.
