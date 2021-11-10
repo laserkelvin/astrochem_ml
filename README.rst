@@ -24,10 +24,19 @@ development, are interfaces to common operations using RDKit that are relevant
 to astrochemistry, and pre-trained embedding models ready for machine learning
 projects that combine molecules and astrophysics.
 
+The plan is to deliver a general purpose library, in addition to providing a
+command line interface to several common tasks.
+
 
 * Free software: MIT license
 * Documentation: https://astrochem-ml.readthedocs.io.
 
+Installation
+------------
+
+Not yet on PyPI, and so for now you can install `astrochem_ml` via:
+
+```pip install git+https://github.com/laserkelvin/astrochem_ml```
 
 Features
 --------
