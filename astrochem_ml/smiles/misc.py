@@ -5,6 +5,7 @@ import numpy as np
 from rdkit import Chem
 from mol2vec import features
 
+
 def canonicize_smiles(smi: str) -> str:
     """
     Simple function to canonicize an input SMILES string.
