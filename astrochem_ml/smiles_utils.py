@@ -5,8 +5,9 @@ for people who are not familiar with working in RDKIT.
 """
 
 from itertools import product
-from typing import List, Dict
+from typing import List, Dict, Union
 from warnings import warn
+from pathlib import Path
 
 import numpy as np
 import periodictable as pt
