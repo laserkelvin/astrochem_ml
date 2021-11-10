@@ -4,13 +4,32 @@ functionality in RDKIT, but abstracts those operations away
 for people who are not familiar with working in RDKIT.
 """
 
-from typing import List
+from itertools import product
+from typing import List, Dict
 from warnings import warn
 
 import numpy as np
 import periodictable as pt
 from rdkit import Chem
 from mol2vec import features
+
+
+def get_common_masses() -> Dict[str, int]:
+    return {
+        atom.symbol: int(atom.mass) for atom in pt.elements
+    }
+
+def get_abundances(molecule: Chem.Mol, abundance_threshold: float = 0.01) -> List[List[float]]:
+    atoms = [atom for atom in molecule.GetAtoms()]
+    symbols = [atom.GetSymbol() for atom in atoms]
+    all_isotopes = []
+    for symbol in symbols:
+        element = getattr(pt.elements, symbol)
+        isotopes = filter(lambda x: x.abundance >= abundance_threshold, element)
+        isotopes = sorted(isotopes, key=lambda x: x.abundance)
+        masses = [isotope.mass for isotope in isotopes]
+        all_isotopes.append(masses)
+    return all_isotopes
 
 
 def generate_single_isos(
