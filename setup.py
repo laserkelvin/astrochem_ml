@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', "gensim==3.8.3", "rdkit-pypi==2021.9.2.1", "mol2vec @ git+https://github.com/samoturk/mol2vec"]
+requirements = ['Click>=7.0', "gensim==3.8.3", "rdkit-pypi==2021.9.2.1", "mol2vec @ git+https://github.com/samoturk/mol2vec", "scikit-learn==1.0.1"]
 
 test_requirements = ['pytest>=3', ]
 
