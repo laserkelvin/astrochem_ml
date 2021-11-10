@@ -95,8 +95,6 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     Naturally, this results in a _lot_ of isotopologues, and so
     by default we ignore the hydrogen substitutions however can be
     changed by the user.
-    
-    TODO: same as `generate_single_isos`, there are redundant subsitutions
 
     Parameters
     ----------
