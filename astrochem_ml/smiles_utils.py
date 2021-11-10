@@ -66,6 +66,7 @@ def generate_single_isos(
     if explicit_h:
         molecule = Chem.AddHs(molecule)
     isotopologues = []
+    common_masses = get_common_masses()
     for atom in molecule.GetAtoms():
         symbol = atom.GetSymbol()
         element = getattr(pt.elements, symbol)
@@ -76,6 +77,8 @@ def generate_single_isos(
             isotopes = sorted(isotopes, key=lambda x: x.abundance)
             masses = [int(isotope.mass) for isotope in isotopes[:-1]]
             for mass in masses:
+                if mass == common_masses.get(symbol):
+                    mass = 0
                 atom.SetIsotope(mass)
                 isotopologues.append(Chem.MolToSmiles(Chem.RemoveHs(molecule)))
         else:
