@@ -18,14 +18,15 @@ from tqdm.auto import tqdm
 
 
 def get_common_masses() -> Dict[str, int]:
-    return {
-        atom.symbol: int(atom.mass) for atom in pt.elements
-    }
+    return {atom.symbol: int(atom.mass) for atom in pt.elements}
 
-def get_isotopes(molecule: Chem.Mol, abundance_threshold: float = 0.01) -> List[List[float]]:
+
+def get_isotopes(
+    molecule: Chem.Mol, abundance_threshold: float = 0.01
+) -> List[List[float]]:
     """
     Get the masses of each atom with sufficient natural abundance.
-    For each atom in the molecule, we 
+    For each atom in the molecule, we
 
     Parameters
     ----------
@@ -110,7 +111,9 @@ def generate_single_isos(
     return list(set(isotopologues))
 
 
-def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: bool = False) -> List[str]:
+def generate_all_isos(
+    smi: str, abundance_threshold: float = 0.01, explicit_h: bool = False
+) -> List[str]:
     """
     Exhaustively generate all possible combinations of isotopologues.
     Naturally, this results in a _lot_ of isotopologues, and so
@@ -152,7 +155,9 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     return list(set(output_smiles))
 
 
-def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, verbose: int = 0, **kwargs) -> List[str]:
+def isotopologues_from_file(
+    filepath: Union[str, Path], n_jobs: int = 1, verbose: int = 0, **kwargs
+) -> List[str]:
     """
     Given a file containing line-by-line SMILES strings,
     generate all possible isotopic combinations. Kwargs
@@ -175,7 +180,9 @@ def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, verbose
     with open(filepath, "r") as read_file:
         smiles = [line.strip() for line in read_file.readlines()]
     with Parallel(n_jobs, verbose=verbose) as worker:
-        isotopologues = worker(delayed(generate_all_isos)(smi, **kwargs) for smi in tqdm(smiles))
+        isotopologues = worker(
+            delayed(generate_all_isos)(smi, **kwargs) for smi in tqdm(smiles)
+        )
     # flatten the list
     isotopologues = [val for sublist in isotopologues for val in sublist]
     return isotopologues
