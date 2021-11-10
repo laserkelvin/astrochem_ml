@@ -26,7 +26,7 @@ test_requirements = [
 setup(
     author="Kin Long Kelvin Lee",
     author_email="kin.long.kelvin.lee@gmail.com",
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
