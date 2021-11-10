@@ -60,7 +60,7 @@ def generate_single_isos(
             masses = [int(isotope.mass) for isotope in isotopes[:-1]]
             for mass in masses:
                 atom.SetIsotope(mass)
-                isotopologues.append(Chem.MolToSmiles(molecule, canonical=True))
+                isotopologues.append(Chem.MolToSmiles(Chem.RemoveHs(molecule)))
         else:
             warn(f"{symbol} not recognized by periodictable, skipping.")
             continue
