@@ -16,6 +16,7 @@ requirements = [
     "rdkit-pypi==2021.9.2.1",
     "mol2vec @ git+https://github.com/samoturk/mol2vec",
     "scikit-learn==1.0.1",
+    "anytree"
 ]
 
 test_requirements = [
