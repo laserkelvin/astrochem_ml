@@ -1,4 +1,3 @@
-
 from typing import List, Union, Tuple, Type
 
 from anytree import Node, RenderTree, NodeMixin
@@ -10,7 +9,7 @@ from astrochem_ml.smiles.functionals import replace_substructure
 
 
 class MoleculeNode(NodeMixin):
-    def __init__(self, molecule: Chem.Mol, parent = None, children = None) -> None:
+    def __init__(self, molecule: Chem.Mol, parent=None, children=None) -> None:
         super().__init__()
         self.molecule = molecule
         self.parent = parent
@@ -31,9 +30,16 @@ class MoleculeNode(NodeMixin):
 
 
 class MoleculeGenerator(object):
-    def __init__(self, starting_smiles: str, substructs: List[Union[str, Chem.Mol]], seed: Union[None, int] = None):
+    def __init__(
+        self,
+        starting_smiles: str,
+        substructs: List[Union[str, Chem.Mol]],
+        seed: Union[None, int] = None,
+    ):
         self.initial_smi = starting_smiles
-        self._nodes = [MoleculeNode(self.initial_molecule),]
+        self._nodes = [
+            MoleculeNode(self.initial_molecule),
+        ]
         self.substructs = substructs
         self.rng = seed
 
@@ -111,7 +117,7 @@ class MoleculeGenerator(object):
         Function to add unique nodes to the current tree. We
         iterate through each of the new molecules, and check
         whether it's contained in the list of SMILES of all nodes
-        currently in the tree. 
+        currently in the tree.
 
         Parameters
         ----------
@@ -162,7 +168,7 @@ class MoleculeGenerator(object):
     def random_substructure(self) -> MoleculeNode:
         """
         Grab a random substructure from the list of
-        substructures. The random choice is dictated by 
+        substructures. The random choice is dictated by
         the object `rng` object.
 
         Returns
