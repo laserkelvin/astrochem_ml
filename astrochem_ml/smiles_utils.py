@@ -46,8 +46,6 @@ def generate_single_isos(
     common isotopologue, and with this assumption we skip over the
     most abundant isotope for each substitution.
 
-    TODO: build in some sort of filter to remove redundancies.
-
     Parameters
     ----------
     smi : str
@@ -85,7 +83,7 @@ def generate_single_isos(
             continue
         # clear isotope information
         atom.SetIsotope(0)
-    return isotopologues
+    return list(set(isotopologues))
 
 
 def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: bool = False) -> List[str]:
@@ -129,7 +127,7 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
                 mass = 0
             atom.SetIsotope(int(mass))
         output_smiles.append(Chem.MolToSmiles(Chem.RemoveHs(molecule)))
-    return output_smiles
+    return list(set(output_smiles))
 
 
 def smi_to_vector(smi: str, model, radius: int = 1) -> np.ndarray:
