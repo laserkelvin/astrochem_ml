@@ -51,6 +51,7 @@ and forth between the native `rdkit` objects and SMILES/SMARTS strings.
 * Exhaustive isotopologue generation in SMILES
 
 .. code-block:: python
+
         >>> from astrochem_ml.smiles import isotopes
         # exhaustively enumerate all possible combinations isotopologues
         # user can set the threshold for natural abundance and whether
@@ -63,6 +64,7 @@ and forth between the native `rdkit` objects and SMILES/SMARTS strings.
 Replace substructures with other ones in a tree data structure!
 
 .. code-block:: python
+
         >>> from astrochem_ml.smiles import MoleculeGenerator
         # randomly grow out possible structures starting from benzene,
         # and iteratively replace structures with other functional groups
