@@ -150,7 +150,7 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     return list(set(output_smiles))
 
 
-def isotopologues_from_file(filepath: Union[str, Path], **kwargs) -> List[str]:
+def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, **kwargs) -> List[str]:
     """
     Given a file containing line-by-line SMILES strings,
     generate all possible isotopic combinations. Kwargs
@@ -170,13 +170,13 @@ def isotopologues_from_file(filepath: Union[str, Path], **kwargs) -> List[str]:
     """
     kwargs.setdefault("abundance_threshold", 0.01)
     kwargs.setdefault("explicit_h", True)
-    full_list = []
     with open(filepath, "r") as read_file:
-        for line in read_file.readlines():
-            smi = line.strip()
-            isotopologues = generate_all_isos(smi, **kwargs)
-            full_list.extend(isotopologues)
-    return full_list
+        smiles = [line.strip() for line in read_file.readlines()]
+    with Parallel(n_jobs, prefer="threads") as worker:
+        isotopologues = worker(delayed(generate_all_isos)(smiles, **kwargs))
+    # flatten the list
+    isotopologues = [val for sublist in isotopologues for val in sublist]
+    return isotopologues
 
 
 def smi_to_vector(smi: str, model, radius: int = 1) -> np.ndarray:
