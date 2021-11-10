@@ -13,6 +13,8 @@ import numpy as np
 import periodictable as pt
 from rdkit import Chem
 from mol2vec import features
+from joblib import Parallel, delayed
+from tqdm.auto import tqdm
 
 
 def get_common_masses() -> Dict[str, int]:
@@ -150,7 +152,7 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     return list(set(output_smiles))
 
 
-def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, **kwargs) -> List[str]:
+def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, verbose: int = 0, **kwargs) -> List[str]:
     """
     Given a file containing line-by-line SMILES strings,
     generate all possible isotopic combinations. Kwargs
@@ -169,11 +171,11 @@ def isotopologues_from_file(filepath: Union[str, Path], n_jobs: int = 1, **kwarg
         List of all isotopologues generated
     """
     kwargs.setdefault("abundance_threshold", 0.01)
-    kwargs.setdefault("explicit_h", True)
+    kwargs.setdefault("explicit_h", False)
     with open(filepath, "r") as read_file:
         smiles = [line.strip() for line in read_file.readlines()]
-    with Parallel(n_jobs, prefer="threads") as worker:
-        isotopologues = worker(delayed(generate_all_isos)(smiles, **kwargs))
+    with Parallel(n_jobs, verbose=verbose) as worker:
+        isotopologues = worker(delayed(generate_all_isos)(smi, **kwargs) for smi in tqdm(smiles))
     # flatten the list
     isotopologues = [val for sublist in isotopologues for val in sublist]
     return isotopologues
