@@ -60,7 +60,8 @@ def replace_aromatic_hydrogens(molecule: Chem.Mol, replace: Union[str, Chem.Mol]
     Returns
     -------
     List[Chem.Mol]
-        All unique combinations of substitutions
+        All unique combinations of substitutions as
+        SMILES strings
     """
     if isinstance(replace, str):
         replace = Chem.MolFromSmarts(replace)
