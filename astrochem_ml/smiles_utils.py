@@ -19,7 +19,7 @@ def get_common_masses() -> Dict[str, int]:
         atom.symbol: int(atom.mass) for atom in pt.elements
     }
 
-def get_abundances(molecule: Chem.Mol, abundance_threshold: float = 0.01) -> List[List[float]]:
+def get_isotopes(molecule: Chem.Mol, abundance_threshold: float = 0.01) -> List[List[float]]:
     """
     Get the masses of each atom with sufficient natural abundance.
     For each atom in the molecule, we 
@@ -136,7 +136,7 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     if explicit_h:
         molecule = Chem.AddHs(molecule)
     output_smiles = []
-    isotopes = product(*get_abundances(molecule, abundance_threshold))
+    isotopes = product(*get_isotopes(molecule, abundance_threshold))
     common_masses = get_common_masses()
     for combination in isotopes:
         for atom, mass in zip(molecule.GetAtoms(), combination):
