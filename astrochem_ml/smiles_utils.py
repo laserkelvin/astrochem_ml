@@ -20,6 +20,24 @@ def get_common_masses() -> Dict[str, int]:
     }
 
 def get_abundances(molecule: Chem.Mol, abundance_threshold: float = 0.01) -> List[List[float]]:
+    """
+    Get the masses of each atom with sufficient natural abundance.
+    For each atom in the molecule, we 
+
+    Parameters
+    ----------
+    molecule : `Chem.Mol`
+        Instance of an RDKIT `Mol` object
+    abundance_threshold : float, optional
+        Minimum percentage natural abundance, by default 0.01.
+        This value corresponds to the deuterium abundance.
+
+    Returns
+    -------
+    List[List[float]]
+        Nested list of possible isotopes for
+        each atom in the `Mol` object
+    """
     atoms = [atom for atom in molecule.GetAtoms()]
     symbols = [atom.GetSymbol() for atom in atoms]
     all_isotopes = []
