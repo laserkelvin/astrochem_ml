@@ -149,6 +149,35 @@ def generate_all_isos(smi: str, abundance_threshold: float = 0.01, explicit_h: b
     return list(set(output_smiles))
 
 
+def isotopologues_from_file(filepath: Union[str, Path], **kwargs) -> List[str]:
+    """
+    Given a file containing line-by-line SMILES strings,
+    generate all possible isotopic combinations. Kwargs
+    are passed to the `generate_all_isos` function, allowing
+    some control over the types of isotopologues generated.
+
+    Parameters
+    ----------
+    filepath : Union[str, Path]
+        Filepath to the SMILES as string or
+        a `pathlib.Path` object
+
+    Returns
+    -------
+    List[str]
+        List of all isotopologues generated
+    """
+    kwargs.setdefault("abundance_threshold", 0.01)
+    kwargs.setdefault("explicit_h", True)
+    full_list = []
+    with open(filepath, "r") as read_file:
+        for line in read_file.readlines():
+            smi = line.strip()
+            isotopologues = generate_all_isos(smi, **kwargs)
+            full_list.extend(isotopologues)
+    return full_list
+
+
 def smi_to_vector(smi: str, model, radius: int = 1) -> np.ndarray:
     """
     Given an embedding model and SMILES string, generate the corresponding
