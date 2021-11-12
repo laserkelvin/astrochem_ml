@@ -12,9 +12,9 @@ To install Astrochem ML, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install astrochem_ml
+    $ pip install git+https://github.com/laserkelvin/astrochem_ml
 
-This is the preferred method to install Astrochem ML, as it will always install the most recent stable release.
+When I get the chance, the package will be on PyPI; until then this is the recommended way of installation ``astrochem_ml`` and its dependencies.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
