@@ -1,4 +1,3 @@
-
 from typing import Union, List, Dict
 from pathlib import Path
 from functools import cached_property
@@ -12,7 +11,13 @@ class Corpus(object):
 
     corpus_ext = {"smiles": "smi", "selfies": "sf"}
 
-    def __init__(self, data: Union[str, Path], corpus_type: Union[None, str] = None, pad: Union[str, None] = "[nop]", n_jobs: Union[int, None] = None):
+    def __init__(
+        self,
+        data: Union[str, Path],
+        corpus_type: Union[None, str] = None,
+        pad: Union[str, None] = "[nop]",
+        n_jobs: Union[int, None] = None,
+    ):
         if isinstance(corpus_type, str):
             assert corpus_type.lower() in ["smiles", "selfies"]
         # infer from the file extension
@@ -35,7 +40,7 @@ class Corpus(object):
         """
         The dataset of strings that are read in from the
         data file. This caches the result, as it can be
-        intensive to constantly read from disk.    
+        intensive to constantly read from disk.
 
         Returns
         -------
@@ -93,7 +98,7 @@ class Corpus(object):
         Returns
         -------
         int
-            
+
         """
         return max(map(lambda x: sf.len_selfies(x), self.selfies))
 
@@ -115,7 +120,7 @@ class Corpus(object):
         Retrieve the token corresponding to a index label.
 
         For example:
-        
+
         ```python
         >>> corpus.label_to_token(3)
         [C]
@@ -136,9 +141,9 @@ class Corpus(object):
     def token_to_label(self, token: str) -> int:
         """
         Retrieve the index label corresponding to a token.
-        
+
         For example:
-        
+
         ```python
         >>> corpus.token_to_label("[C]")
         3
