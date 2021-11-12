@@ -1,64 +1,69 @@
 
-from typing import Union
+from typing import Union, List
 from pathlib import Path
+from functools import cached_property
 
 from joblib import dump, load
-
-from astrochem_ml import smiles
-
-
-default_model_path = Path(__file__).parents[0].absolute().joinpath("EmbeddingModel.pkl")
+import selfies as sf
+from tqdm.auto import tqdm
 
 
-class EmbeddingModel(object):
-    """
-    A class that wraps both word2vec and scikit-learn pipelines.
-    The main usage of this class is an abstract `vectorize` pipeline
-    that will first generate molecule embeddings, followed by running
-    it through any transformations with scikit-learn.
-    """
-    def __init__(self, w2vec_obj, transform=None, radius: int = 1) -> None:
-        self._model = w2vec_obj
-        self._transform = transform
-        self._radius = radius
-        self._covariance = None
+class Corpus(object):
 
-    @property
-    def model(self):
-        return self._model
+    corpus_ext = {"smiles": "smi", "selfies": "sf"}
 
-    @property
-    def transform(self):
-        return self._transform
-
-    @property
-    def radius(self):
-        return self._radius
-
-    def vectorize(self, smi: str):
-        vector = smiles.misc.smi_to_vector(smi, self.model, self.radius)
-        # 
-        if self._transform is not None:
-            # the clustering is always the last step, which we ignore
-            for step in self.transform.steps[:len(self.transform.steps)-1]:
-                vector = step[1].transform(vector)
-        return vector[0]
-
-    def __call__(self, smi: str):
-        return self.vectorize(smi)
-
-    @classmethod
-    def from_pkl(cls, w2vec_path: str, transform_path: Union[str, None] = None, **kwargs):
-        w2vec_obj = smiles.misc.load_model(w2vec_path)
-        if transform_path:
-            transform_obj = load(transform_path)
+    def __init__(self, data: Union[str, Path], corpus_type: Union[None, str] = None, pad: Union[str, None] = "[nop]"):
+        if isinstance(corpus_type, str):
+            assert corpus_type.lower() in ["smiles", "selfies"]
+        # infer from the file extension
         else:
-            transform_obj = None
-        return cls(w2vec_obj, transform_obj, **kwargs)
+            for key, value in self.corpus_ext.items():
+                if Path(data).suffix in value:
+                    corpus_type = key
+        if not corpus_type:
+            raise KeyError(f"Unable to determine corpus type!")
+        self.corpus_path = Path(data)
+        self.corpus_type = corpus_type
+        self.pad = pad
 
-    @classmethod
-    def from_pretrained(cls):
-        return load(default_model_path)
+    @property
+    def smiles_to_selfies(self) -> List[str]:
+        return [sf.encoder(smi) for smi in tqdm(self.data)]
 
-    def save(self, path: str):
-        dump(self, path)
+    @property
+    def data(self) -> List[str]:
+        if hasattr(self, "_data"):
+            return self._data
+        else:
+            with open(self.corpus_path) as read_file:
+                data = list(map(lambda x: x.strip(), read_file.readlines()))
+            self._data = data
+            return data
+
+    @cached_property
+    def selfies(self) -> str:
+        if self.corpus_type == "selfies":
+            return self.data
+        else:
+            return [sf.encoder(smi) for smi in self.data]
+
+    @cached_property
+    def vocabulary(self):
+        alphabet = sf.get_alphabet_from_selfies(self.selfies)
+        if self.pad:
+            alphabet.add(self.pad)
+        return list(sorted(alphabet))
+
+    @cached_property
+    def max_length(self) -> int:
+        return max(map(lambda x: sf.len_selfies(x), self.selfies))
+
+    @property
+    def token_mapping(self):
+        return {token: index for index, token in enumerate(self.vocabulary)}
+
+    def label_to_token(self, label: int) -> str:
+        return self.vocabulary.index(label)
+
+    def token_to_label(self, token: str) -> int:
+        return self.token_mapping.get(token)

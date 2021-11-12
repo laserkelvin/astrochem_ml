@@ -17,7 +17,8 @@ requirements = [
     "mol2vec @ git+https://github.com/samoturk/mol2vec",
     "scikit-learn==1.0.1",
     "anytree",
-    "periodictable"
+    "periodictable",
+    "selfies==2.0.0"
 ]
 
 test_requirements = [
