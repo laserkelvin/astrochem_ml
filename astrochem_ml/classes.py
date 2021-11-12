@@ -5,6 +5,7 @@ from functools import cached_property
 from joblib import dump, load
 import selfies as sf
 from tqdm.auto import tqdm
+from joblib import Parallel, delayed
 
 
 class Corpus(object):
@@ -30,6 +31,8 @@ class Corpus(object):
         self.corpus_path = Path(data)
         self.corpus_type = corpus_type
         self.pad = pad
+        if n_jobs:
+            self._parallel = Parallel(n_jobs=n_jobs)
 
     @property
     def smiles_to_selfies(self) -> List[str]:
@@ -48,12 +51,12 @@ class Corpus(object):
             List of all strings in the dataset.
         """
         if hasattr(self, "_data"):
-            return self._data
+            return tqdm(self._data)
         else:
             with open(self.corpus_path) as read_file:
                 data = list(map(lambda x: x.strip(), read_file.readlines()))
             self._data = data
-            return data
+            return tqdm(data)
 
     @cached_property
     def selfies(self) -> List[str]:
@@ -70,7 +73,10 @@ class Corpus(object):
         if self.corpus_type == "selfies":
             return self.data
         else:
-            return [sf.encoder(smi) for smi in self.data]
+            if hasattr(self._parallel):
+                return self._parallel(delayed(sf.encoder)(smi) for smi in self.data)
+            else:
+                return [sf.encoder(smi) for smi in self.data]
 
     @cached_property
     def vocabulary(self) -> List[str]:
@@ -100,7 +106,11 @@ class Corpus(object):
         int
 
         """
-        return max(map(lambda x: sf.len_selfies(x), self.selfies))
+        if hasattr(self._parallel):
+            counts = self._parallel(delayed(sf.len_selfies)(string) for string in self.selfies)
+        else:
+            counts = map(lambda x: sf.len_selfies(x), self.selfies)
+        return max(counts)
 
     @property
     def token_mapping(self) -> Dict[str, int]:
