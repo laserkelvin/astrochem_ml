@@ -73,7 +73,7 @@ class Corpus(object):
         if self.corpus_type == "selfies":
             return self.data
         else:
-            if hasattr(self, self._parallel):
+            if hasattr(self, "_parallel"):
                 return self._parallel(delayed(sf.encoder)(smi) for smi in self.data)
             else:
                 return [sf.encoder(smi) for smi in self.data]
@@ -106,8 +106,10 @@ class Corpus(object):
         int
 
         """
-        if hasattr(self, self._parallel):
-            counts = self._parallel(delayed(sf.len_selfies)(string) for string in self.selfies)
+        if hasattr(self, "_parallel"):
+            counts = self._parallel(
+                delayed(sf.len_selfies)(string) for string in self.selfies
+            )
         else:
             counts = map(lambda x: sf.len_selfies(x), self.selfies)
         return max(counts)
