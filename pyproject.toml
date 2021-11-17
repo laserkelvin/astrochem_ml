@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "astrochem_ml"
+version = "0.1.0"
+description = "Cheminformatics tools for astrochemistry"
+authors = ["Kelvin Lee <kin.long.kelvin.lee@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+rdkit-pypi = "^2021.9.2"
+scikit-learn = "^1.0.1"
+anytree = "^2.8.0"
+periodictable = "^1.6.0"
+selfies = "^2.0.0"
+mol2vec = {git = "https://github.com/samoturk/mol2vec"}
+
+[tool.poetry.dev-dependencies]
+black = "^21.11b0"
+pre-commit = "^2.15.0"
+flake8 = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
