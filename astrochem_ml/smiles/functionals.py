@@ -1,10 +1,11 @@
-
 from typing import Union, List
 
 from rdkit import Chem
 
 
-def replace_substructure(molecule: Chem.Mol, pattern: Chem.Mol, replace: Chem.Mol, **kwargs) -> List[Chem.Mol]:
+def replace_substructure(
+    molecule: Chem.Mol, pattern: Chem.Mol, replace: Chem.Mol, **kwargs
+) -> List[Chem.Mol]:
     """
     Simple wrapper function around the RDKIT function. This is
     mostly implemented for convenience and to homogenize other
@@ -29,20 +30,22 @@ def replace_substructure(molecule: Chem.Mol, pattern: Chem.Mol, replace: Chem.Mo
     return Chem.ReplaceSubstructs(molecule, pattern, replace, **kwargs)
 
 
-def replace_aromatic_hydrogens(molecule: Chem.Mol, replace: Union[str, Chem.Mol], **kwargs) -> List[Chem.Mol]:
+def replace_aromatic_hydrogens(
+    molecule: Chem.Mol, replace: Union[str, Chem.Mol], **kwargs
+) -> List[Chem.Mol]:
     """
     Sequentially replaces all hydrogens bonded to an aromatic carbon
     or nitrogen with a specified functional group. The replacement
     can be specified with SMARTS as a string, or with a `Chem.Mol`
     object generated with `Chem.MolFromSmarts`.
-    
+
     Keep in mind that because the matching is done with an aromatic
     carbon/nitrogen _and_ hydrogen, the SMARTS should include the
     aromatic atom we're removing.
-    
+
     An example usage would be to replace hydrogens with cyanide
     groups, and the corresponding function call would be:
-    
+
     ```
     > cyanide = Chem.MolFromSmarts("cC#N")
     > replace_aromatic_hydrogens(molecule, cyanide)
