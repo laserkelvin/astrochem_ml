@@ -12,7 +12,7 @@ scikit-learn = "^1.0.1"
 anytree = "^2.8.0"
 periodictable = "^1.6.0"
 selfies = "^2.0.0"
-mol2vec = {git = "https://github.com/samoturk/mol2vec"}
+tqdm = "^4.62.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.11b0"
