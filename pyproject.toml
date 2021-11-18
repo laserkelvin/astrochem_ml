@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "astrochem_ml"
-version = "0.1.0"
+version = "0.1.1"
+readme = "README.md"
+homepage = "https://github.com/laserkelvin/astrochem_ml"
 description = "Cheminformatics tools for astrochemistry"
 authors = ["Kelvin Lee <kin.long.kelvin.lee@gmail.com>"]
 license = "MIT"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
