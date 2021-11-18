@@ -1,4 +1,3 @@
-
 from itertools import product
 from typing import Dict, List, Union
 from pathlib import Path
@@ -11,7 +10,7 @@ from tqdm.auto import tqdm
 
 
 def get_common_masses() -> Dict[str, int]:
-    return {atom.symbol: int(atom.mass) for atom in pt.elements}
+    return {atom.symbol: round(atom.mass) for atom in pt.elements}
 
 
 def get_isotopes(
@@ -90,7 +89,7 @@ def generate_single_isos(
             isotopes = filter(lambda x: x.abundance >= abundance_threshold, element)
             # sort by abundance and then grab all the isotopes except the most commmon
             isotopes = sorted(isotopes, key=lambda x: x.abundance)
-            masses = [int(isotope.mass) for isotope in isotopes[:-1]]
+            masses = [round(isotope.mass) for isotope in isotopes[:-1]]
             for mass in masses:
                 if mass == common_masses.get(symbol):
                     mass = 0
@@ -141,9 +140,9 @@ def generate_all_isos(
         for atom, mass in zip(molecule.GetAtoms(), combination):
             # substitute out the default isotope so we don't
             # ugly out the SMILES
-            if int(mass) == common_masses.get(atom.GetSymbol()):
+            if round(mass) == common_masses.get(atom.GetSymbol()):
                 mass = 0
-            atom.SetIsotope(int(mass))
+            atom.SetIsotope(round(mass))
         output_smiles.append(Chem.MolToSmiles(Chem.RemoveHs(molecule)))
     return list(set(output_smiles))
 
